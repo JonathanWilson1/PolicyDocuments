@@ -22,7 +22,7 @@ title: App Development Documents
 email: 
 description: >- # this means to ignore newlines until "baseurl:"
   Supplementary documents for app development. For example Policy Documents and Terms of Use.
-baseurl: "/PolicyDocuments" # the subpath of your site, e.g. /blog
+baseurl: "/PolicyDocuments/" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: JohnyJWilson
 github_username:  JonathanWilson1
