@@ -22,45 +22,56 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           track_progress: true
           prompt: |
-            You are reviewing a pull request for **PolicyDocuments** — the public GitHub Pages repo that
+            You are reviewing a pull request for **PolicyDocuments**, the public GitHub Pages repo that
             serves the **privacy policies and support pages** linked from Jonathan's App Store listings and
-            from inside shipped app builds (currently AI Decorator). These pages are legally load-bearing:
-            Apple rejects or pulls apps whose privacy/support URLs 404 or whose policy contradicts the app's
-            App Privacy ("nutrition label") answers, and UK GDPR applies (the developer is UK-based).
-            Read `README.md` for the URL map.
+            from inside shipped app builds (currently AI Decorator). These pages carry legal weight. Apple
+            rejects or removes apps whose privacy or support URL 404s, or whose policy contradicts the app's
+            privacy label or in-app behaviour. UK GDPR / DPA 2018 applies (the controller is a UK sole
+            developer), and EU GDPR applies to EU users.
 
-            The bar is **high**. Be specific and opinionated; don't pad with praise. You are not a lawyer
-            and should say so when a point needs one, but flag every concrete gap.
+            **First read `docs/legal-review-basis.md`.** It is the researched checklist (Apple 5.1.1/5.1.2,
+            UK GDPR Art. 13, the DUAA 2025 complaints duty, processor facts, upcoming EU AI Act / DMCC
+            rules) with sources. Cite its section (e.g. "basis §2.4 transfers") in each finding. If the PR
+            changes that file, check that new rules come with a source. If a date in it has passed or
+            a rule looks stale, say so as a suggestion. Also read `README.md` for the URL map.
+
+            The bar is **high**. Be specific; don't pad with praise. You are not a lawyer. Say when a
+            point needs one, but still flag every concrete gap, with suggested wording.
 
             ## What to look for (in priority order)
 
-            1. **URLs that shipped builds and the App Store depend on** — moving, renaming or deleting any
-               served file, or breaking the redirects in `privacypolicys/2022/10/01/`, is a **blocker**:
-               those exact URLs are baked into already-shipped app builds and ASC metadata. Check
-               `.nojekyll` stays, redirects use a correct absolute target, and every page renders as
-               static HTML on GitHub Pages.
-            2. **Accuracy vs what the app actually does** — for AI Decorator the known data flows are:
-               room photos and prompts sent to **Replicate** (third-party AI processing, FLUX models);
-               **Firebase** Analytics and Remote Config (Google); **RevenueCat** + Apple for subscriptions;
-               transform history stored **on device** (Core Data + local files); optional **Amazon**
-               affiliate links. A policy that omits a processor, misstates where photos go or how long
-               they're kept, claims "we never share data", or contradicts these flows is a **blocker**.
-               If the PR adds a new app, check its policy names that app's processors the same way.
-            3. **Required GDPR / Apple content** — identity and contact of the controller, what data,
-               purposes and **lawful basis**, recipients/processors, international transfers, retention
-               periods, user rights (access, deletion, objection, complaint to the ICO), how to request
-               deletion, children's data, the policy's effective/updated date, and how changes are notified.
-               Missing items → blocker; vague items → suggestion with wording.
-            4. **Support page** — a working contact method (email/form) that a reviewer can use, matching
-               the support URL in the listing; subscription management / refund guidance pointing to Apple.
-            5. **Consistency** — same company/developer name, contact email and dates across pages and
-               apps; no copy-pasted text naming the wrong app.
-            6. **Privacy of the pages themselves** — no tracking scripts, analytics or third-party embeds
-               added to legal pages without disclosure; no personal data (home address, phone) beyond what
-               is legally required.
-            7. **HTML quality** — valid HTML, `lang` attribute, mobile viewport, readable on phone, no
-               broken links, `noindex` not accidentally added to pages Apple needs to reach.
-            8. **Writing** — plain, unambiguous English; typos in legal text matter.
+            1. **Shipped URLs**: moving, renaming or deleting a served file, or breaking the redirects in
+               `privacypolicys/2022/10/01/`, is a **blocker**. Those exact URLs are baked into shipped builds
+               and App Store metadata. `.nojekyll` must stay, redirects must use a correct absolute target,
+               and pages must render as static HTML on GitHub Pages. No `noindex`/robots blocks on pages
+               Apple must reach.
+            2. **Accuracy vs real data flows** (basis §4): every processor named (Replicate, Google
+               Firebase Analytics/Crashlytics/Remote Config, RevenueCat, Apple, Amazon affiliate links),
+               with the right data, purpose and retention (e.g. Replicate deletes API inputs/outputs after
+               about 1 hour; Firebase retention must match the GA4 setting). Free-text prompts sent to
+               analytics must be disclosed. A missing processor, a wrong claim about where photos go or how
+               long they're kept, or "we never share data" is a **blocker**. New apps get the same check.
+            3. **Apple 5.1.1(i) / 5.1.2(i)** (basis §1): third-party AI sharing must name the provider and
+               the data, and match an **in-app explicit consent** step. Note that the policy alone doesn't
+               satisfy Apple, and say what the app must also do. Deletion/revocation instructions must be present.
+               The policy must not contradict the App Store privacy label.
+            4. **UK/EU GDPR Art. 13 content** (basis §2): controller and contact, purposes **with a lawful
+               basis for each**, recipients, **international transfers + safeguard** (US processors),
+               retention per data type, full rights list, consent withdrawal, **right to complain to the
+               ICO**. Each missing item is a **blocker**; vague wording gets a suggestion.
+            5. **DUAA 2025 complaints** (basis §3): the notice explains how to complain to the developer
+               directly (channel, 30-day acknowledgement), not only to the ICO.
+            6. **Support page**: a working contact (Apple 1.2 requires published contact info for AI
+               content creation apps), and subscription cancellation/refund guidance pointing to Apple.
+               Watch the DMCC subscription rules expected from Jan 2027 (basis §5).
+            7. **AI transparency** (basis §5): results described as AI-generated; flag anything that
+               implies photos train models unless that's true.
+            8. **Consistency**: same controller name, contact email and dates across pages; an updated
+               "last updated" date whenever substance changes; no text naming the wrong app.
+            9. **Privacy of the pages themselves**: no trackers, analytics or third-party embeds on legal
+               pages; no personal data (home address, phone) beyond what is legally required.
+            10. **HTML & writing**: valid HTML, `lang`, mobile viewport, working links; plain unambiguous
+                English. Typos in legal text matter.
 
             ## What to skip
             - Generic praise ("LGTM!", "nice refactor"); just say what's wrong or note "no issues found"
